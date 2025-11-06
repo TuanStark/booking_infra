@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   jenkins:
     # Option 1: Build từ Dockerfile custom có Docker CLI và Node.js

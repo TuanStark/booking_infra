@@ -5,22 +5,37 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Cài Docker CLI
+# Cài Docker CLI, Node.js 18, và Trivy
 RUN apt-get update && \
     apt-get install -y \
     ca-certificates \
     curl \
+    wget \
     gnupg \
     lsb-release && \
+    # Cài Docker CLI
     curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    # Cài Node.js 18
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    # Update và cài đặt Docker CLI và Node.js
     apt-get update && \
-    apt-get install -y docker-ce-cli && \
-    rm -rf /var/lib/apt/lists/*
-
-# Cài Node.js 18 (optional - nếu muốn dùng Node.js trực tiếp)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
+    apt-get install -y \
+    docker-ce-cli \
+    nodejs && \
+    # Cài Trivy từ binary (cách này ổn định hơn và không cần apt-key)
+    ARCH=$(dpkg --print-architecture) && \
+    TRIVY_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/') && \
+    if [ "$ARCH" = "amd64" ]; then \
+        wget -qO- https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb -O /tmp/trivy.deb; \
+    elif [ "$ARCH" = "arm64" ]; then \
+        wget -qO- https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-ARM64.deb -O /tmp/trivy.deb; \
+    else \
+        wget -qO- https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb -O /tmp/trivy.deb; \
+    fi && \
+    dpkg -i /tmp/trivy.deb && \
+    rm /tmp/trivy.deb && \
+    # Cleanup
     rm -rf /var/lib/apt/lists/*
 
 USER jenkins
