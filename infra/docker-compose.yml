@@ -129,6 +129,22 @@ services:
       my_custom_network:
         ipv4_address: ${NOTIFICATION_DB_IP}
 
+  # ================= POST DB =================
+  post-db:
+    image: postgres:16
+    container_name: booking_post-db
+    environment:
+      POSTGRES_USER: ${POST_DB_USER}
+      POSTGRES_PASSWORD: ${POST_DB_PASS}
+      POSTGRES_DB: ${POST_DB_NAME}
+    ports:
+      - "${POST_DB_PORT}:5432"
+    volumes:
+      - post_db_data:/var/lib/postgresql/data
+    networks:
+      my_custom_network:
+        ipv4_address: ${POST_DB_IP}
+
   # ================= REDIS =================
   redis:
     image: redis:7
@@ -218,6 +234,7 @@ volumes:
   review_db_data:
   room_db_data:
   notification_db_data:
+  post_db_data:
   redis_data:
   pgadmin_data:
   rabbitmq_data:
