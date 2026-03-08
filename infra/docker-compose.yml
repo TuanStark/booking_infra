@@ -189,40 +189,40 @@ services:
         ipv4_address: ${RABBITMQ_IP}
 
   # ================= ZOOKEEPER =================
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.6.0
-    container_name: booking_zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ALLOW_ANONYMOUS_LOGIN: "yes"
-    ports:
-      - "2181:2181"
-    volumes:
-      - zookeeper_data:/var/lib/zookeeper/data
-      - zookeeper_log:/var/lib/zookeeper/log
-    networks:
-      my_custom_network:
-        ipv4_address: ${ZOOKEEPER_IP}
+  # zookeeper:
+  #   image: confluentinc/cp-zookeeper:7.6.0
+  #   container_name: booking_zookeeper
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #     ALLOW_ANONYMOUS_LOGIN: "yes"
+  #   ports:
+  #     - "2181:2181"
+  #   volumes:
+  #     - zookeeper_data:/var/lib/zookeeper/data
+  #     - zookeeper_log:/var/lib/zookeeper/log
+  #   networks:
+  #     my_custom_network:
+  #       ipv4_address: ${ZOOKEEPER_IP}
 
-  # ================= KAFKA =================
-  kafka:
-    image: confluentinc/cp-kafka:7.6.0
-    container_name: booking_kafka
-    ports:
-      - "${KAFKA_PORT}:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://booking_kafka:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    depends_on:
-      - zookeeper
-    volumes:
-      - kafka_data:/var/lib/kafka/data
-    networks:
-      my_custom_network:
-        ipv4_address: ${KAFKA_IP}
+  # # ================= KAFKA =================
+  # kafka:
+  #   image: confluentinc/cp-kafka:7.6.0
+  #   container_name: booking_kafka
+  #   ports:
+  #     - "${KAFKA_PORT}:9092"
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_LISTENERS: PLAINTEXT://:9092
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://booking_kafka:9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #   depends_on:
+  #     - zookeeper
+  #   volumes:
+  #     - kafka_data:/var/lib/kafka/data
+  #   networks:
+  #     my_custom_network:
+  #       ipv4_address: ${KAFKA_IP}
 
 # ================= VOLUMES =================
 volumes:
